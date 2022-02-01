@@ -6,6 +6,19 @@ const btn = getElById('btn-kick');
 const btn2 = getElById('btn-kick-2');
 const $logs = document.querySelector('#logs');
 
+function countClicks(limitClicks) {
+    return () => limitClicks > 0 ? --limitClicks : limitClicks = 0;
+}
+
+const btn1_RemainClicks = countClicks(7);
+const btn2_RemainClicks = countClicks(7);
+
+const changeButtonName = (btn, clicks) => {
+    let btnName = btn.textContent.split('').slice(0, btn.textContent.length - 3).join('');
+
+    return `${btnName} (${clicks})`;
+}
+
 const character = {
     name: 'Pikachu',
     defaultHp: 100,
@@ -48,11 +61,10 @@ function changeHP(count) {
 
     const log = this === enemy ? generateLog(this, character) : generateLog(this, enemy);
 
-    $logs.scrollTop = 0;
-
     const $p = document.createElement('p');
     $p.innerText = `${log} (-${count}HP [${this.damageHP}/${this.defaultHp}])`;
     $logs.insertBefore($p, $logs.children[0]);
+    $logs.scrollTop = 0;
 
     // console.log(`${log} (-${count}HP [${this.damageHP}/${this.defaultHp}])`);
 
@@ -75,16 +87,28 @@ btn.addEventListener('click', function () {
 
     character.changeHP(random(20));
     enemy.changeHP(random(20));
+
+    let remainClicks = btn1_RemainClicks();
+
+    btn.textContent = changeButtonName(btn, remainClicks);
+
+    if (!remainClicks) btn.disabled = true;
 })
 
 btn2.addEventListener('click', function () {
     console.log('Kick-2');
 
-    character.changeHP(random(5));
-    enemy.changeHP(random(5));
+    character.changeHP(random(10));
+    enemy.changeHP(random(10));
+
+    let remainClicks = btn2_RemainClicks();
+
+    btn2.textContent = changeButtonName(btn2, remainClicks);
+
+    if (!remainClicks) btn2.disabled = true;
 })
 
-function generateLog({name: first}, {name: second}) {
+function generateLog({ name: first }, { name: second }) {
     const logs = [
         `${first} вспомнил что-то важное, но неожиданно ${second}, не помня себя от испуга, ударил в предплечье врага.`,
         `${first} поперхнулся, и за это ${second} с испугу приложил прямой удар коленом в лоб врага.`,
@@ -103,6 +127,9 @@ function generateLog({name: first}, {name: second}) {
 
 function init() {
     console.log('Start Game!');
+
+    btn.textContent += ' (7)';
+    btn2.textContent += ' (7)';
 
     character.renderHP();
     enemy.renderHP();
