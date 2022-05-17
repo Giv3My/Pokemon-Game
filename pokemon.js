@@ -26,7 +26,9 @@ class Pokemon extends Selectors {
 
         if (this.hp.current <= 0) {
             this.hp.current = 0;
-            alert(this.name + ' проиграл!');
+            setTimeout(() => {
+                alert(this.name + ' проиграл!');
+            }, 0);
         }
 
         this.renderHP();
